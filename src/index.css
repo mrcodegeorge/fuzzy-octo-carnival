@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 30 25% 97%;
+    --foreground: 20 10% 10%;
+
+    --card: 30 20% 99%;
+    --card-foreground: 20 10% 10%;
+
+    --popover: 30 20% 99%;
+    --popover-foreground: 20 10% 10%;
+
+    --primary: 12 80% 48%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 30 25% 93%;
+    --secondary-foreground: 20 10% 10%;
+
+    --muted: 30 15% 94%;
+    --muted-foreground: 20 5% 45%;
+
+    --accent: 35 70% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 12 80% 48%;
+
+    --radius: 0.5rem;
+
+    /* Custom tokens */
+    --warm-cream: 30 30% 96%;
+    --warm-sand: 30 20% 90%;
+    --terracotta: 12 80% 48%;
+    --terracotta-light: 12 60% 94%;
+    --charcoal: 20 10% 15%;
+    --gold: 35 70% 50%;
+    --gold-light: 35 70% 95%;
+
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'DM Sans', sans-serif;
+    --font-accent: 'Space Grotesk', sans-serif;
+
+    --shadow-soft: 0 2px 20px -4px hsl(20 20% 30% / 0.08);
+    --shadow-card: 0 4px 30px -8px hsl(20 20% 30% / 0.1);
+    --shadow-elevated: 0 16px 50px -12px hsl(20 20% 30% / 0.15);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+}
+
+@layer components {
+  .btn-beauty {
+    @apply inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold tracking-wide transition-all duration-300;
+    font-family: var(--font-accent);
+    @apply bg-foreground text-background hover:opacity-90;
+    border-radius: 0;
+  }
+
+  .btn-beauty-outline {
+    @apply inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold tracking-wide transition-all duration-300;
+    font-family: var(--font-accent);
+    @apply border-2 border-foreground text-foreground hover:bg-foreground hover:text-background;
+    border-radius: 0;
+  }
+
+  .btn-beauty-gold {
+    @apply inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold tracking-wide transition-all duration-300;
+    font-family: var(--font-accent);
+    background: hsl(var(--gold));
+    color: white;
+    border-radius: 0;
+  }
+
+  .btn-beauty-primary {
+    @apply inline-flex items-center justify-center px-8 py-3.5 text-sm font-semibold tracking-wide transition-all duration-300;
+    font-family: var(--font-accent);
+    @apply bg-primary text-primary-foreground hover:opacity-90;
+    border-radius: 0;
+  }
+
+  .section-padding {
+    @apply px-4 py-16 md:px-8 lg:px-16 lg:py-24;
+  }
+
+  .product-card {
+    @apply overflow-hidden transition-all duration-500;
+    border-radius: 0;
+  }
+
+  .product-card:hover {
+    box-shadow: var(--shadow-elevated);
+    transform: translateY(-2px);
+  }
+
+  .glass-card {
+    @apply border border-border/50;
+    background: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow-card);
+    border-radius: 0;
+  }
+
+  .rose-gradient {
+    background: linear-gradient(135deg, hsl(var(--warm-cream)), hsl(var(--warm-sand)));
+  }
+
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .editorial-line {
+    @apply w-12 h-px bg-foreground;
+  }
+
+  .font-accent {
+    font-family: var(--font-accent);
+  }
+}
