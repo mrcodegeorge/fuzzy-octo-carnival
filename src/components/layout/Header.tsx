@@ -8,6 +8,8 @@ import { useStoreSettings } from "@/hooks/useStoreSettings";
 import { motion, AnimatePresence } from "framer-motion";
 import SearchDialog from "@/components/SearchDialog";
 
+import NotificationBell from "./NotificationBell";
+
 const Header = () => {
   const { user } = useAuth();
   const { totalItems, setIsCartOpen } = useCart();
@@ -63,6 +65,7 @@ const Header = () => {
                 <Shield size={18} />
               </Link>
             )}
+            <NotificationBell />
             <Link to={user ? "/account" : "/auth"} className="hidden p-2 text-foreground/60 transition-colors hover:text-foreground md:block">
               <User size={18} />
             </Link>
