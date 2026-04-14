@@ -236,10 +236,12 @@ const CheckoutPage = () => {
         email: user!.email,
         amount: Math.round(orderTotal * 100),
         currency: "GHS",
+        channels: ['mobile_money', 'card'], // Prioritize MoMo for Ghana market
         metadata: {
           custom_fields: [
             { display_name: "Customer Name", variable_name: "customer_name", value: address.full_name },
             { display_name: "Phone", variable_name: "phone", value: address.phone },
+            { display_name: "Order Source", variable_name: "order_source", value: "Tillies Avenue Web" },
           ],
         },
         callback: async (response: any) => {
@@ -253,7 +255,7 @@ const CheckoutPage = () => {
         },
         onClose: () => {
           setSubmitting(false);
-          toast.info("Payment cancelled");
+          toast.info("Payment cancelled. Your cart is still items.");
         },
       });
       handler.openIframe();
@@ -402,18 +404,41 @@ const CheckoutPage = () => {
               </div>
 
               <div className="rounded-2xl border border-border bg-card p-5">
-                <div className="flex items-center gap-2">
-                  <CreditCard size={16} className="text-primary" />
-                  <h3 className="text-sm font-semibold">Payment via Paystack</h3>
+                <div className="flex items-center justify-between gap-4">
+                  <div className="flex flex-1 flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <CreditCard size={16} className="text-primary" />
+                      <h3 className="text-sm font-semibold text-foreground">Secure Payment via Paystack</h3>
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Prioritizing <span className="font-bold text-foreground">Mobile Money</span> (MTN, Telecel, AirtelTigo) & Cards.
+                    </p>
+                  </div>
+                  <img 
+                    src="/C:/Users/king_George/.gemini/antigravity/brain/b1485b21-c6fc-418c-ac19-5000d01f6045/ghana_momo_logos_1776190004860.png" 
+                    alt="Ghana Mobile Money Support" 
+                    className="h-8 object-contain opacity-90"
+                  />
                 </div>
-                <p className="mt-2 text-sm text-muted-foreground">You'll be prompted to pay securely with Card or Mobile Money via Paystack.</p>
+                
+                <div className="mt-4 rounded-xl bg-primary/5 p-3 border border-primary/10">
+                  <div className="flex items-start gap-2">
+                    <ShieldCheck size={14} className="mt-0.5 text-primary shrink-0" />
+                    <div className="space-y-1">
+                      <p className="text-[11px] font-bold text-foreground leading-tight">MoMo User Tip:</p>
+                      <p className="text-[11px] text-muted-foreground leading-snug">
+                        Keep your phone unlocked. You'll receive a prompt to enter your PIN after clicking the button below.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="flex gap-3">
                 <button onClick={() => setStep("shipping")} className="btn-beauty-outline flex-1 text-sm">Back</button>
-                <button onClick={handlePaystack} disabled={submitting} className="btn-beauty flex flex-1 items-center justify-center gap-2 text-sm disabled:opacity-50">
+                <button onClick={handlePaystack} disabled={submitting} className="btn-beauty flex flex-3 items-center justify-center gap-2 text-sm disabled:opacity-50">
                   {submitting && <Loader2 size={16} className="animate-spin" />}
-                  Pay {formatPrice(orderTotal)}
+                  Complete Payment — {formatPrice(orderTotal)}
                 </button>
               </div>
             </motion.div>
