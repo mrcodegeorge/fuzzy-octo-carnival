@@ -1,17 +1,16 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useCategories } from "@/hooks/useProducts";
-import { Sparkles, Palette, User, Eye, Droplets, SprayCan, HandHeart, ArrowUpRight } from "lucide-react";
+import * as LucideIcons from "lucide-react";
+import { Sparkles, ArrowUpRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const iconMap: Record<string, React.ReactNode> = {
-  skincare: <Sparkles size={28} />,
-  makeup: <Palette size={28} />,
-  "mens-grooming": <User size={28} />,
-  "eye-makeup": <Eye size={28} />,
-  "serums-essences": <Droplets size={28} />,
-  cleansers: <SprayCan size={28} />,
-  "body-care": <HandHeart size={28} />,
+const CategoryIcon = ({ iconName, size = 28 }: { iconName: string | null; size?: number }) => {
+  if (!iconName) return <Sparkles size={size} />;
+  const Icon = (LucideIcons as any)[iconName];
+  if (Icon) return <Icon size={size} />;
+  // Fallback for emojis or unknown icon names
+  return <span style={{ fontSize: `${size}px` }}>{iconName}</span>;
 };
 
 const CategoriesSection = () => {
@@ -63,7 +62,7 @@ const CategoriesSection = () => {
                   >
                     <div className="flex items-center justify-between">
                       <span className="text-muted-foreground transition-colors group-hover:text-background/70">
-                        {iconMap[cat.slug] ?? <Sparkles size={28} />}
+                        <CategoryIcon iconName={cat.icon} />
                       </span>
                       <ArrowUpRight size={16} className="opacity-0 transition-all group-hover:opacity-100" />
                     </div>

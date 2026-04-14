@@ -2,7 +2,15 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Plus, Pencil, Trash2, X, Loader2 } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { toast } from "sonner";
+import { IconPicker } from "@/components/admin/IconPicker";
+
+const CategoryIcon = ({ iconName, className = "" }: { iconName: string | null; className?: string }) => {
+  if (!iconName) return null;
+  const Icon = (LucideIcons as any)[iconName];
+  return Icon ? <Icon className={className} /> : <span className={className}>{iconName}</span>;
+};
 
 const AdminCategories = () => {
   const queryClient = useQueryClient();
@@ -79,21 +87,27 @@ const AdminCategories = () => {
             <h3 className="font-heading text-lg font-semibold">{editingId ? "Edit Category" : "New Category"}</h3>
             <button onClick={resetForm} className="text-muted-foreground hover:text-foreground"><X size={18} /></button>
           </div>
-          <div className="grid gap-4 md:grid-cols-4">
-            <input placeholder="Name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary" />
-            <input placeholder="Slug *" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })}
-              className="rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary" />
-            <input placeholder="Icon (emoji)" value={form.icon} onChange={(e) => setForm({ ...form, icon: e.target.value })}
-              className="rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary" />
-            <input placeholder="Sort Order" type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: e.target.value })}
-              className="rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary" />
+          <div className="grid gap-6 md:grid-cols-2">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Basic Info</label>
+                <input placeholder="Name *" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary" />
+                <input placeholder="Slug *" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })}
+                  className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary" />
+                <input placeholder="Sort Order" type="number" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: e.target.value })}
+                  className="w-full rounded-xl border border-border bg-background px-4 py-2.5 text-sm outline-none focus:border-primary" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Select Icon</label>
+              <IconPicker selectedIcon={form.icon} onChange={(icon) => setForm({ ...form, icon })} />
+            </div>
           </div>
-          <div className="mt-4 flex gap-3">
+          <div className="mt-6 flex gap-3">
             <button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending || !form.name || !form.slug}
-              className="btn-beauty text-xs disabled:opacity-50">
-              {saveMutation.isPending && <Loader2 size={14} className="animate-spin mr-1" />}
-              {editingId ? "Update" : "Add"}
+              className="btn-beauty text-xs disabled:opacity-50 min-w-[100px]">
+              {saveMutation.isPending ? <Loader2 size={14} className="animate-spin" /> : (editingId ? "Update" : "Add")}
             </button>
             <button onClick={resetForm} className="btn-beauty-outline text-xs">Cancel</button>
           </div>
@@ -108,7 +122,9 @@ const AdminCategories = () => {
             {categories.map((c) => (
               <div key={c.id} className="flex items-center justify-between px-5 py-4 hover:bg-muted/20">
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">{c.icon}</span>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <CategoryIcon iconName={c.icon} className="h-5 w-5" />
+                  </div>
                   <div>
                     <p className="text-sm font-medium">{c.name}</p>
                     <p className="text-xs text-muted-foreground">{c.slug}</p>
