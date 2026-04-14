@@ -8,8 +8,10 @@ Tillies Avenue Glow is a high-performance, aesthetically stunning storefront bui
 
 ### Key Features
 - **Premium Storefront:** Dynamic, responsive UI with glassmorphism and smooth animations.
-- **Admin Dashboard:** Comprehensive management suite for products, orders, categories, and delivery zones.
-- **MoMo-First Checkout:** Optimized for MTN MoMo, Telecel Cash, and AirtelTigo Money via aggregator integrations.
+- **Admin Management Hub:** Comprehensive suite for products, categories, customers, and delivery zones. Includes direct customer profile editing and personalized in-app notifications.
+- **Realtime Notifications:** Instant delivery of order updates and transactional alerts via a persistent notification bell system.
+- **Advanced Checkout:** Saved delivery address management with Ghana-specific region support for a streamline "one-click" checkout experience.
+- **MoMo-First Payments:** Optimized for MTN MoMo, Telecel Cash, and AirtelTigo Money via aggregator integrations.
 - **Transactional Emails:** Integration with **Resend API** for order confirmations, shipping updates, and password resets.
 - **Secure Backend:** Powered by Supabase with extensive Role-Level Security (RLS) policies and Edge Functions.
 
@@ -19,9 +21,9 @@ Tillies Avenue Glow is a high-performance, aesthetically stunning storefront bui
 
 - **Frontend:** React, Vite, TypeScript
 - **Styling:** Tailwind CSS, Framer Motion, shadcn/ui
-- **Backend:** Supabase (Auth, Database, Storage, Edge Functions)
+- **Backend:** Supabase (Auth, Database, Storage, Realtime, Edge Functions)
 - **Emails:** Resend API
-- **Payments:** Paystack / MoMo Aggregators
+- **Payments:** Paystack / Ghanaian MoMo Aggregators
 
 ---
 
@@ -43,8 +45,6 @@ Create a `.env` file in the root directory and add your Supabase credentials:
 ```env
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
-# Required for edge functions if deploying via CLI
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 ```
 
 ### 4. Running the App
@@ -75,8 +75,11 @@ This project uses a custom **Auth Hook** for password resets via Resend.
 - [x] Initial Storefront & Admin Layout
 - [x] Supabase Migration & Edge Functions
 - [x] Resend API Integration (Order Emails & Password Reset)
+- [x] Unified Notification System (Realtime alerts)
+- [x] Delivery Address Management System
+- [x] Admin Customer Management Tools (Edit & Notify)
+- [ ] Production Deployment to Vercel
 - [ ] Optimized MoMo Checkout Flow (In Progress)
-- [ ] Push Notification system for order updates
 - [ ] Multi-currency support (GHS / USD)
 
 ---
