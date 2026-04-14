@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { formatPrice } from "@/data/products";
 import { useProducts, useCategories, useBrands } from "@/hooks/useProducts";
 import ProductCard from "@/components/ProductCard";
+import RecommendationsSection from "@/components/shop/RecommendationsSection";
 import { SlidersHorizontal, X, Grid3X3, LayoutGrid } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -201,6 +202,16 @@ const ShopPage = () => {
             <button onClick={clearFilters} className="btn-beauty mt-4 text-xs">Clear Filters</button>
           </div>
         )}
+
+        {/* AI Recommendations */}
+        <RecommendationsSection
+          products={products}
+          isLoading={isLoading}
+          activeCategory={activeCategory}
+          activeBrand={activeBrand}
+          categoryName={categories.find((c) => c.slug === activeCategory)?.name}
+          excludeIds={filtered.map((p) => p.id)}
+        />
       </div>
     </div>
   );
