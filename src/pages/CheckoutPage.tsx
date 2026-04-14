@@ -47,6 +47,36 @@ const CheckoutPage = () => {
     region: "Greater Accra",
   });
 
+  // Fetch saved addresses
+  const { data: savedAddresses = [] } = useQuery({
+    queryKey: ["addresses", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("addresses")
+        .select("*")
+        .eq("user_id", user!.id)
+        .order("is_default", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!user,
+  });
+
+  // Auto-select default address on mount
+  useEffect(() => {
+    if (savedAddresses.length > 0 && !address.full_name) {
+      const defaultAddr = savedAddresses[0];
+      setAddress({
+        full_name: defaultAddr.full_name,
+        phone: defaultAddr.phone,
+        address_line1: defaultAddr.address_line1,
+        address_line2: defaultAddr.address_line2 || "",
+        city: defaultAddr.city,
+        region: defaultAddr.region,
+      });
+    }
+  }, [savedAddresses]);
+
   // Fetch delivery zones
   const { data: zones = [] } = useQuery({
     queryKey: ["delivery-zones"],
@@ -274,6 +304,44 @@ const CheckoutPage = () => {
                 <MapPin size={18} className="text-primary" />
                 <h2 className="font-heading text-lg font-semibold">Delivery Address</h2>
               </div>
+
+              {savedAddresses.length > 0 && (
+                <div className="mb-6 space-y-3">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground block mb-2">
+                    Use a saved address
+                  </label>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {savedAddresses.map((addr) => (
+                      <button
+                        key={addr.id}
+                        type="button"
+                        onClick={() => {
+                          setAddress({
+                            full_name: addr.full_name,
+                            phone: addr.phone,
+                            address_line1: addr.address_line1,
+                            address_line2: addr.address_line2 || "",
+                            city: addr.city,
+                            region: addr.region,
+                          });
+                          toast.success("Address selected");
+                        }}
+                        className={`text-left p-3 rounded-xl border transition-all ${
+                          address.address_line1 === addr.address_line1 
+                            ? "border-primary bg-primary/5 ring-1 ring-primary" 
+                            : "border-border hover:border-primary/50"
+                        }`}
+                      >
+                        <p className="text-sm font-bold truncate">{addr.full_name}</p>
+                        <p className="text-xs text-muted-foreground truncate">{addr.address_line1}</p>
+                        <p className="text-[10px] text-muted-foreground">{addr.city}, {addr.region}</p>
+                      </button>
+                    ))}
+                  </div>
+                  <div className="h-px bg-border w-full my-6" />
+                </div>
+              )}
+
               <div className="grid gap-4 sm:grid-cols-2">
                 <input placeholder="Full Name *" value={address.full_name} onChange={(e) => updateAddress("full_name", e.target.value)} className={inputClass} />
                 <input placeholder="Phone (e.g. 0241234567) *" value={address.phone} onChange={(e) => updateAddress("phone", e.target.value)} className={inputClass} />

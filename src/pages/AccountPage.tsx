@@ -2,11 +2,20 @@ import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Navigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, Package, MapPin, Heart, LogOut, ChevronDown, ChevronUp, ShoppingBag, Star } from "lucide-react";
+import { User, Package, MapPin, Heart, LogOut, ChevronDown, ChevronUp, ShoppingBag, Star, Plus, Trash2, Edit, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatPrice } from "@/data/products";
 import { useWishlistProducts } from "@/hooks/useWishlist";
+import { toast } from "sonner";
+import AddressForm from "@/components/account/AddressForm";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const statusColors: Record<string, string> = {
   pending: "bg-amber-100 text-amber-700",
@@ -18,8 +27,11 @@ const statusColors: Record<string, string> = {
 
 const AccountPage = () => {
   const { user, signOut, loading } = useAuth();
+  const queryClient = useQueryClient();
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"orders" | "wishlist">("orders");
+  const [activeTab, setActiveTab] = useState<"orders" | "wishlist" | "addresses">("orders");
+  const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+  const [editingAddress, setEditingAddress] = useState<any>(null);
 
   const { data: profile } = useQuery({
     queryKey: ["profile", user?.id],
@@ -68,6 +80,32 @@ const AccountPage = () => {
 
   const { data: wishlistData = [] } = useWishlistProducts();
 
+  const { data: addresses = [] } = useQuery({
+    queryKey: ["addresses", user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("addresses")
+        .select("*")
+        .eq("user_id", user!.id)
+        .order("is_default", { ascending: false });
+      if (error) throw error;
+      return data || [];
+    },
+    enabled: !!user,
+  });
+
+  const deleteAddress = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("addresses").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["addresses", user?.id] });
+      toast.success("Address deleted");
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+
   if (loading) return null;
   if (!user) return <Navigate to="/auth" replace />;
 
@@ -108,16 +146,21 @@ const AccountPage = () => {
                   activeTab === item.tab ? "ring-2 ring-primary" : ""
                 }`}
               >
-                <item.icon size={20} className="text-primary" />
+                <item.icon size={20} className={activeTab === item.tab ? "text-primary" : "text-primary/60"} />
                 <span className="text-xs font-medium">{item.label}</span>
                 <span className="text-lg font-bold">{item.count}</span>
               </button>
             ))}
-            <div className="glass-card flex flex-col items-center gap-2 p-4 text-center">
-              <MapPin size={20} className="text-primary" />
+            <button
+              onClick={() => setActiveTab("addresses")}
+              className={`glass-card flex flex-col items-center gap-2 p-4 text-center transition-colors ${
+                activeTab === "addresses" ? "ring-2 ring-primary" : ""
+              }`}
+            >
+              <MapPin size={20} className={activeTab === "addresses" ? "text-primary" : "text-primary/60"} />
               <span className="text-xs font-medium">Addresses</span>
-              <span className="text-lg font-bold">0</span>
-            </div>
+              <span className="text-lg font-bold">{addresses.length}</span>
+            </button>
             <button
               onClick={signOut}
               className="glass-card flex flex-col items-center gap-2 p-4 text-center text-destructive transition-colors hover:bg-destructive/5"
@@ -281,7 +324,89 @@ const AccountPage = () => {
               )}
             </div>
           )}
+
+          {/* Addresses Tab */}
+          {activeTab === "addresses" && (
+            <div className="mt-10">
+              <div className="flex items-center justify-between">
+                <h2 className="font-heading text-xl font-bold">My Addresses</h2>
+                <button
+                  onClick={() => { setEditingAddress(null); setIsAddressModalOpen(true); }}
+                  className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-primary hover:text-primary/80 transition-colors"
+                >
+                  <Plus size={14} /> Add New
+                </button>
+              </div>
+
+              {addresses.length > 0 ? (
+                <div className="mt-4 grid gap-4">
+                  {addresses.map((addr) => (
+                    <div key={addr.id} className="glass-card p-5 relative">
+                      {addr.is_default && (
+                        <span className="absolute right-5 top-5 bg-primary/10 text-primary text-[10px] font-bold uppercase px-2 py-0.5 rounded-full">
+                          Default
+                        </span>
+                      )}
+                      <div className="space-y-1 pr-16 text-sm">
+                        <p className="font-bold">{addr.full_name}</p>
+                        <p className="text-muted-foreground">{addr.address_line1}</p>
+                        {addr.address_line2 && <p className="text-muted-foreground">{addr.address_line2}</p>}
+                        <p className="text-muted-foreground">{addr.city}, {addr.region}</p>
+                        <p className="text-muted-foreground flex items-center gap-1.5"><Phone size={12} /> {addr.phone}</p>
+                      </div>
+                      <div className="mt-4 flex gap-4 pt-4 border-t border-border/50">
+                        <button
+                          onClick={() => { setEditingAddress(addr); setIsAddressModalOpen(true); }}
+                          className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          <Edit size={14} /> Edit
+                        </button>
+                        {!addr.is_default && (
+                          <button
+                            onClick={() => deleteAddress.mutate(addr.id)}
+                            className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-destructive transition-colors"
+                          >
+                            <Trash2 size={14} /> Remove
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="mt-4 rounded-xl border border-border p-8 text-center">
+                  <MapPin size={32} className="mx-auto text-muted-foreground/30" />
+                  <p className="mt-3 text-sm text-muted-foreground">No saved addresses</p>
+                  <button 
+                    onClick={() => setIsAddressModalOpen(true)}
+                    className="btn-beauty mt-4 inline-block text-xs"
+                  >
+                    Add Your First Address
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </motion.div>
+
+        {/* Address Form Dialog */}
+        <Dialog open={isAddressModalOpen} onOpenChange={setIsAddressModalOpen}>
+          <DialogContent className="sm:max-w-[550px]">
+            <DialogHeader>
+              <DialogTitle className="font-heading text-xl">
+                {editingAddress ? "Edit Address" : "Add New Address"}
+              </DialogTitle>
+              <DialogDescription>
+                Provide your delivery details for faster checkout.
+              </DialogDescription>
+            </DialogHeader>
+            <AddressForm
+              initialData={editingAddress}
+              onSuccess={() => setIsAddressModalOpen(false)}
+              onCancel={() => setIsAddressModalOpen(false)}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
