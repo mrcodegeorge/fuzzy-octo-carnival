@@ -1,73 +1,85 @@
-# Welcome to your Lovable project
+# ✨ Tillies Avenue Glow
 
-## Project info
+A premium, MoMo-first eCommerce platform for curated beauty and skincare products, specifically optimized for the Ghanaian market.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🚀 Overview
 
-## How can I edit this code?
+Tillies Avenue Glow is a high-performance, aesthetically stunning storefront built with a modern tech stack. It features a seamless shopping experience, real-time inventory management, and a robust admin dashboard.
 
-There are several ways of editing your application.
+### Key Features
+- **Premium Storefront:** Dynamic, responsive UI with glassmorphism and smooth animations.
+- **Admin Dashboard:** Comprehensive management suite for products, orders, categories, and delivery zones.
+- **MoMo-First Checkout:** Optimized for MTN MoMo, Telecel Cash, and AirtelTigo Money via aggregator integrations.
+- **Transactional Emails:** Integration with **Resend API** for order confirmations, shipping updates, and password resets.
+- **Secure Backend:** Powered by Supabase with extensive Role-Level Security (RLS) policies and Edge Functions.
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 🛠️ Tech Stack
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Frontend:** React, Vite, TypeScript
+- **Styling:** Tailwind CSS, Framer Motion, shadcn/ui
+- **Backend:** Supabase (Auth, Database, Storage, Edge Functions)
+- **Emails:** Resend API
+- **Payments:** Paystack / MoMo Aggregators
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## ⚙️ Local Setup
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### 1. Prerequisites
+- Node.js (v18+)
+- Supabase CLI (optional, for local development)
 
-Follow these steps:
+### 2. Installation
+```bash
+git clone https://github.com/mrcodegeorge/fuzzy-octo-carnival.git
+cd fuzzy-octo-carnival
+npm install
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### 3. Environment Variables
+Create a `.env` file in the root directory and add your Supabase credentials:
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
+# Required for edge functions if deploying via CLI
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### 4. Running the App
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 💾 Database & Seeding
 
-**Use GitHub Codespaces**
+The project comes with prepared SQL migrations and a seed script.
+1. **Migrations:** Located in `supabase/migrations/`. 
+2. **Seeding:** To populate the shop with sample skincare products, run the SQL in `supabase/seed.sql` via the Supabase SQL Editor.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+---
 
-## What technologies are used for this project?
+## 📧 Email Configuration (Auth Hook)
 
-This project is built with:
+This project uses a custom **Auth Hook** for password resets via Resend.
+1. Deploy the hook: `npx supabase functions deploy auth-hook`
+2. Configure **Resend API Key** in the `store_settings` table.
+3. Enable the **"Send Email Hook"** in the Supabase Auth Settings dashboard.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## 🗺️ Roadmap
+- [x] Initial Storefront & Admin Layout
+- [x] Supabase Migration & Edge Functions
+- [x] Resend API Integration (Order Emails & Password Reset)
+- [ ] Optimized MoMo Checkout Flow (In Progress)
+- [ ] Push Notification system for order updates
+- [ ] Multi-currency support (GHS / USD)
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+## 📄 License
+This project is private and intended for Tillies Avenue Glow.
