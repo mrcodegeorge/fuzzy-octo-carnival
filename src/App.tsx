@@ -37,6 +37,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminDeliveryZones from "./pages/admin/AdminDeliveryZones";
 import AdminBlogPosts from "./pages/admin/AdminBlogPosts";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import NotificationsPage from "./pages/NotificationsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -84,6 +85,7 @@ const AppContent = () => (
       <Route path="/checkout" element={<StorefrontLayout><CheckoutPage /></StorefrontLayout>} />
       <Route path="/order-confirmation" element={<StorefrontLayout><OrderConfirmationPage /></StorefrontLayout>} />
       <Route path="/account" element={<StorefrontLayout><AccountPage /></StorefrontLayout>} />
+      <Route path="/notifications" element={<StorefrontLayout><NotificationsPage /></StorefrontLayout>} />
       <Route path="/faq" element={<StorefrontLayout><FAQPage /></StorefrontLayout>} />
       <Route path="/shipping" element={<StorefrontLayout><ShippingPolicyPage /></StorefrontLayout>} />
       <Route path="/privacy" element={<StorefrontLayout><PrivacyPolicyPage /></StorefrontLayout>} />
